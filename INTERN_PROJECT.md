@@ -1026,6 +1026,166 @@ npm test
 
 ---
 
+## Phase 4: AI Intelligence Layer (Advanced - Weeks 9-12)
+
+**Note**: This is an advanced feature. Complete Phases 1-3 first before attempting.
+
+### Overview: RAG-Powered Workshop Intelligence
+
+Add AI-powered retrieval features to help facilitators prepare faster and smarter. See **`RAG_INTELLIGENCE_GUIDE.md`** for complete implementation details.
+
+### Three Intelligence Features
+
+#### 1. Workshop Preparation Intelligence 📊
+**What it does**: Natural language queries over tourism statistics and evidence sources.
+
+**Example**: 
+```
+Query: "What does NTB data show about Lakeside visitor volumes in Q3 2025?"
+
+Answer: "According to NTB statistics for Q3 2025, Lakeside recorded 45,000 
+tourist arrivals, a 12% increase from Q3 2024. Hotel occupancy averaged 68%..."
+
+Sources: [NTB Q3 2025 Report, Pokhara Hotel Association Data]
+```
+
+**Tech Stack**: OpenAI GPT-4 + Embeddings + Supabase pgvector
+
+**Time Saved**: 2+ hours per workshop on data gathering
+
+#### 2. Policy Alignment Checking ✅
+**What it does**: Automatically validate if action plans align with policy frameworks.
+
+**Example**:
+```
+Query: "Does this homestay initiative align with Nepal Tourism Strategy?"
+
+Answer: "Yes, strongly aligns with Strategic Pillar 3 (Community-Based Tourism) 
+and gender equity goals. Recommendation: Add monitoring indicators..."
+
+Sources: [Nepal Tourism Strategy 2022-2032, DIGO Criteria Document]
+```
+
+**Document Corpus**: National Tourism Strategy, MoCTCA policies, SDC frameworks, DIGO criteria
+
+#### 3. SDC Reporting Assistance 📝
+**What it does**: Auto-generate SDC progress report drafts from platform data.
+
+**Example**:
+```
+Query: "Draft Q2 2026 progress report for Madi RM"
+
+Output: [Full formatted report with metrics, outcomes, evidence quality scores]
+
+Sources: [Workshop records, flow data, action plan tracking, stakeholder logs]
+```
+
+**Time Saved**: 6+ hours per quarterly report
+
+### Implementation Timeline
+
+**Week 9-10: Document Ingestion**
+- Set up Supabase pgvector
+- Build document upload API with PDF parsing
+- Create embedding generation pipeline
+- Upload initial document corpus (20-50 policy docs, statistics)
+
+**Week 11: RAG Query System**
+- Implement vector similarity search
+- Build RAG query API with GPT-4
+- Add source citation extraction
+- Test retrieval accuracy
+
+**Week 12: User Interface**
+- Create RAG query interface component
+- Build document uploader UI
+- Add evidence quality dashboard integration
+- User testing with DIGO facilitators
+
+### Tech Stack Decision
+
+**Option A: OpenAI (Recommended for Production)**
+```bash
+npm install openai
+# Cost: ~$2-5/month for active DIGO usage
+# Pros: Best quality, fast, reliable
+# Cons: Requires API key, small ongoing cost
+```
+
+**Option B: Open Source (For Learning/Testing)**
+```bash
+npm install ollama @xenova/transformers
+# Cost: $0
+# Pros: Free, runs locally, privacy
+# Cons: Slower, needs GPU, lower quality
+```
+
+### Success Criteria
+
+- ✅ 80%+ of facilitator queries answered with sources
+- ✅ Query response time < 10 seconds
+- ✅ Policy alignment checks catch 95%+ of conflicts
+- ✅ SDC report generation reduces time from 8h → 2h
+- ✅ Zero errors in source citations
+
+### Files to Create
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   └── rag/
+│   │       ├── query/route.ts         # RAG query endpoint
+│   │       ├── upload/route.ts        # Document upload
+│   │       └── generate-report/route.ts
+│   └── rag/
+│       └── page.tsx                    # RAG interface page
+├── components/
+│   └── rag/
+│       ├── RAGQueryInterface.tsx      # Main query UI
+│       ├── DocumentUploader.tsx       # Upload documents
+│       └── ReportGenerator.tsx        # SDC report drafts
+└── lib/
+    └── rag/
+        ├── embeddings.ts              # Embedding utils
+        ├── chunking.ts                # Text chunking
+        └── prompts.ts                 # System prompts
+```
+
+### Database Schema
+
+```sql
+-- See RAG_INTELLIGENCE_GUIDE.md for full schema
+
+CREATE TABLE rag_documents (
+  id UUID PRIMARY KEY,
+  title TEXT NOT NULL,
+  source_type TEXT NOT NULL,
+  source_org TEXT NOT NULL,
+  file_url TEXT,
+  metadata JSONB
+);
+
+CREATE TABLE rag_chunks (
+  id UUID PRIMARY KEY,
+  document_id UUID REFERENCES rag_documents(id),
+  chunk_text TEXT NOT NULL,
+  embedding vector(1536),  -- OpenAI embeddings
+  metadata JSONB
+);
+```
+
+### Learning Resources
+
+- **RAG Fundamentals**: "What is Retrieval-Augmented Generation?" (Pinecone blog)
+- **pgvector Guide**: Supabase pgvector documentation
+- **OpenAI Embeddings**: OpenAI embeddings API guide
+- **LangChain Tutorial**: Building RAG applications with LangChain
+
+**Read the full guide**: `RAG_INTELLIGENCE_GUIDE.md`
+
+---
+
 ## Questions?
 
 **Before coding**:
@@ -1040,6 +1200,35 @@ npm test
 3. Ask ChatGPT/Claude for debugging help
 4. If still blocked after 1 hour, ping me
 
+---
+
+## 📚 Additional Documentation
+
+This project has comprehensive documentation to guide you:
+
+### Core Guides
+- **INTERN_PROJECT.md** (this file) - Your main onboarding guide with week-by-week instructions
+- **DATA_EXPORT_GUIDE.md** - Sample data files, evidence quality examples, and data quality workflow
+- **RAG_INTELLIGENCE_GUIDE.md** - AI-powered workshop intelligence implementation (Phase 4)
+- **IMPLEMENTATION_SUMMARY.md** - High-level overview of complete feature set and architecture
+- **ARCHITECTURE.md** - Detailed system architecture diagrams, data flows, and component structure
+
+### Quick Navigation
+
+**Just starting?** → Read this file (INTERN_PROJECT.md) from top to bottom, start with Week 1
+
+**Need sample data?** → Check DATA_EXPORT_GUIDE.md for ready-to-use JSON files
+
+**Building RAG features?** → See RAG_INTELLIGENCE_GUIDE.md for complete implementation
+
+**Want big picture?** → Read IMPLEMENTATION_SUMMARY.md for full feature overview
+
+**Understanding architecture?** → Check ARCHITECTURE.md for system diagrams and data flows
+
+---
+
 **Good luck! 🚀**
 
 Looking forward to seeing your map visualizer next week.
+
+*Remember: You're building something that helps real communities manage tourism sustainably. Every line of code you write contributes to Nepal's tourism development and the UN Sustainable Development Goals!* 🌍
